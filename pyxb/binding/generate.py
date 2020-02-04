@@ -1358,10 +1358,14 @@ class _ModuleNaming_mixin (object):
         aux_imports = []
         for (mr, as_path) in six.iteritems(self.__importModulePathMap):
             assert self != mr
+            module_path = mr.modulePath()
+            import_str = "from . " if not module_path.startswith("pyxb") else ""
             if as_path is not None:
-                aux_imports.append('import %s as %s' % (mr.modulePath(), as_path))
+                import_str += 'import %s as %s' % (module_path, as_path)
             else:
-                aux_imports.append('import %s' % (mr.modulePath(),))
+                import_str += 'import %s' % (module_path)
+
+            aux_imports.append(import_str)
         template_map['aux_imports'] = "\n".join(aux_imports)
         template_map['namespace_decls'] = "\n".join(self.__namespaceDeclarations)
         template_map['module_uid'] = self.moduleUID()
